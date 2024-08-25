@@ -10,6 +10,8 @@
 <body>
     <div id="menu-container"></div>
 
+    <h1 style="display:flex; padding-top: 40px; justify-content: center; align-items: center;">Clientes</h1>
+
     <div class="container" style="padding-top: 60px; overflow: auto; ">
         <div style="display: flex; justify-content: end;">
             <input class="form-control me-2" type="search" placeholder="Procurar" aria-label="Search" style="width: auto;">
@@ -33,7 +35,9 @@
                     <td>000.000.000-00</td>
                     <td>Jataí</td>
                     <td>(00) 0 0000-0000</td>
-                    <td><a href="form_cliente.html" class="update-btn">Atualizar</a></td>
+                    <td><a href="form_cliente.html" class="btn btn-primary">Atualizar</a>
+                        <button type="button" class="btn btn-danger">Deletar</button>
+                    </td>
                 </tr>
                 
             </tbody>
@@ -41,7 +45,7 @@
     </div>
     <div>
       <a href="form_cliente.html" class="btn btn-primary" role="button">Cadastrar</a>
-      <button type="button" class="btn btn-danger">Deletar</button>
+      
     </div>
     
     <script src="navbar.js"></script>

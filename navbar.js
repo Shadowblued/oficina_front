@@ -22,10 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
             <a class="nav-link active" href="veiculo.html">Veículos</a>
             </li>
             <li class="nav-item" style="padding:0px 20px">
-            <a class="nav-link active" href="pecas.html">Peças</a>
+            <a class="nav-link active" href="peca.html">Peças</a>
             </li>
             <li class="nav-item" style="padding:0px 20px">
-            <a class="nav-link active" href="servicos.html">Serviços</a>
+            <a class="nav-link active" href="servico.html">Serviços</a>
             </li>
         </ul>
         </div>

@@ -8,15 +8,24 @@ document.addEventListener('DOMContentLoaded', function() {
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item">
+        <ul class="navbar-nav" style="padding:0px 30px">
+            <li class="nav-item" style="padding:0px 20px">
             <a class="nav-link active" aria-current="page" href="index.html">Ordem de Serviço</a>
             </li>
-            <li class="nav-item">
-            <a class="nav-link active" href="#">Features</a>
+            <li class="nav-item" style="padding:0px 20px">
+            <a class="nav-link active" href="#">Clientes</a>
             </li>
-            <li class="nav-item">
-            <a class="nav-link active" href="#">Pricing</a>
+            <li class="nav-item" style="padding:0px 20px">
+            <a class="nav-link active" href="#">Mecânicos</a>
+            </li>
+            <li class="nav-item" style="padding:0px 20px">
+            <a class="nav-link active" href="#">Veículos</a>
+            </li>
+            <li class="nav-item" style="padding:0px 20px">
+            <a class="nav-link active" href="#">Peças</a>
+            </li>
+            <li class="nav-item" style="padding:0px 20px">
+            <a class="nav-link active" href="#">Serviços</a>
             </li>
         </ul>
         </div>

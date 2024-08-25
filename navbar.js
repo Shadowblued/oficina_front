@@ -13,19 +13,19 @@ document.addEventListener('DOMContentLoaded', function() {
             <a class="nav-link active" aria-current="page" href="index.html">Ordem de Serviço</a>
             </li>
             <li class="nav-item" style="padding:0px 20px">
-            <a class="nav-link active" href="#">Clientes</a>
+            <a class="nav-link active" href="cliente.html">Clientes</a>
             </li>
             <li class="nav-item" style="padding:0px 20px">
-            <a class="nav-link active" href="#">Mecânicos</a>
+            <a class="nav-link active" href="mecanico.html">Mecânicos</a>
             </li>
             <li class="nav-item" style="padding:0px 20px">
-            <a class="nav-link active" href="#">Veículos</a>
+            <a class="nav-link active" href="veiculo.html">Veículos</a>
             </li>
             <li class="nav-item" style="padding:0px 20px">
-            <a class="nav-link active" href="#">Peças</a>
+            <a class="nav-link active" href="pecas.html">Peças</a>
             </li>
             <li class="nav-item" style="padding:0px 20px">
-            <a class="nav-link active" href="#">Serviços</a>
+            <a class="nav-link active" href="servicos.html">Serviços</a>
             </li>
         </ul>
         </div>

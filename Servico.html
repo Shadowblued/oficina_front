@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviço</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+</head>
+<body>
+    <div id="menu-container"></div>
+
+    <h1 style="display:flex; padding-top: 40px; justify-content: center; align-items: center;">Serviços</h1>
+
+    <div class="container" style="padding-top: 60px; overflow: auto; ">
+        <div style="display: flex; justify-content: end;">
+            <input class="form-control me-2" type="search" placeholder="Procurar" aria-label="Search" style="width: auto;">
+            <button class="btn btn-outline-success" type="submit">Procurar</button>
+        </div>
+        <div class="row align-items-start">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Troca de Óleo</td>
+                    <td>R$ 60,00</td>
+                    <td><a href="form_cliente.html" class="btn btn-primary">Atualizar</a>
+                        <button type="button" class="btn btn-danger">Deletar</button>
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+    <div>
+      <a href="form_serviço.html" class="btn btn-primary" role="button">Cadastrar</a>
+      
+    </div>
+    
+    <script src="navbar.js"></script>
+</body>
+</html>

@@ -69,6 +69,7 @@ async function fetchData(URL, tableSelector, colunas, pageurl) {
                             fetchData(URL, tableSelector, colunas);
                         } else {
                             console.error('Erro ao deletar o item:', deleteResponse.statusText);
+                            fetchData(URL, tableSelector, colunas);
                         }
                     } catch (error) {
                         console.error('Erro ao tentar deletar o item:', error);
@@ -233,6 +234,24 @@ document.addEventListener('DOMContentLoaded', function () {
             setupUpdateFormSubmission('#form-mecanico', `http://18.188.56.142:8080/api/mecanicos/${itemId}`);
         } else {
             setupFormSubmission('#form-mecanico', 'http://18.188.56.142:8080/api/mecanicos');
+        }
+    }
+
+    if (document.querySelector("#servico-table")) {
+        fetchData('http://18.188.56.142:8080/api/servicos', '#servico-table', ['id', 'descricaoServico', 'valorServico'], 'form_serviço.html');
+    }
+
+    if (document.querySelector('#form-servico')) {
+        // Verifica se há um ID na URL para determinar se é uma atualização
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('id')) {
+            const itemId = urlParams.get('id');
+            populateForm(urlParams, '#form-servico');
+            const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanURL);
+            setupUpdateFormSubmission('#form-servico', `http://18.188.56.142:8080/api/servicos/${itemId}`);
+        } else {
+            setupFormSubmission('#form-servico', 'http://18.188.56.142:8080/api/servicos');
         }
     }
 });

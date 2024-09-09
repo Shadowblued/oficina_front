@@ -1,38 +1,44 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veículo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="scripts.js" defer></script>
 </head>
+
 <body>
     <div id="menu-container"></div>
-    
+
     <h1 style="display:flex; padding-top: 40px; justify-content: center; align-items: center;">Cadastro de Veículo</h1>
     <div style="display: flex; justify-content: center;">
-        <form class="row g-3" action="" method="get">
+        <form id="form-veiculo" class="row g-3">
             <div class="col-md-6">
-                <label for="exampleFormControlInput1" class="form-label">Descrição</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Descrição" required>
+                <label for="Descrição" class="form-label">Descrição</label>
+                <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição" required>
             </div>
             <div class="col-md-6">
-                <label for="exampleFormControlInput1" class="form-label">Posse</label>
-                <select class="form-select" id="exampleFormControlInput1" placeholder="Posse" required>
-                    <option selected>Selecione o Dono</option>
+                <label for="Posse" class="form-label">Posse</label>
+                <select class="form-select" id="cliente" name="cliente" placeholder="Posse" required>
+                    <option>Selecione o Dono</option>
                 </select>
             </div>
             <div class="col-md-6">
-                <label for="exampleFormControlInput1" class="form-label">Placa</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Placa" required>
+                <label for="placa" class="form-label">Placa</label>
+                <input type="text" class="form-control" id="placa" name="placa" placeholder="Placa" required>
             </div>
             <div class="col-md-6">
-                <label for="exampleFormControlInput1" class="form-label">Ano</label>
-                <input type="number" class="form-control" id="exampleFormControlInput1" placeholder="Ano" required>
+                <label for="ano" class="form-label">Ano</label>
+                <input type="number" class="form-control" id="ano" name="anoModelo" placeholder="Ano" required>
             </div>
             <div>
-                <a onclick="window.history.back();" type="button" class="btn btn-primary">Voltar</a>
+                <a href="veiculo.html" type="button" class="btn btn-primary">Voltar</a>
                 <button type="submit" class="btn btn-primary">Cadastrar</button>
             </div>
         </form>
@@ -40,4 +46,5 @@
     <script src="navbar.js"></script>
 
 </body>
+
 </html>

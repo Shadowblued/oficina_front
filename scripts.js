@@ -25,7 +25,12 @@ async function fetchData(URL, tableSelector, colunas, pageurl) {
                 const cell = document.createElement('td');
 
 
-                cell.textContent = item[colunas] || 'N/A'; // Preenche com 'N/A' se o dado não existir
+                if (colunas === 'cliente') {
+                    cell.textContent = item[colunas]?.nome || 'N/A'; // Exibe o nome do cliente
+                } else {
+                    cell.textContent = item[colunas] || 'N/A'; // Preenche com 'N/A' se o dado não existir
+                }
+
                 row.appendChild(cell);
             });
 
@@ -165,7 +170,6 @@ function setupFormSubmission(formSelector, URL) {
             .catch(error => {
                 console.error('Erro:', error);
             });
-        return false;
     });
 }
 
@@ -177,6 +181,156 @@ function populateForm(urlParams, formSelector) {
             input.value = value;
         }
     });
+}
+
+async function setupFormSubmissionVeiculos(URL, formSelector) {
+    const form = document.querySelector(formSelector);
+
+    try {
+        const response = await fetch(URL, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        console.log(data);
+
+        const selectCliente = document.getElementById('cliente');
+
+        data.forEach(item => {
+            // Cria uma nova opção no select
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.text = item.nome;
+
+            // Adiciona a opção ao select
+            selectCliente.appendChild(option);
+        });
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Captura os dados do formulário
+            const formData = new FormData(event.target);
+            const formObject = {};
+
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            // Exibe o objeto no console para verificar se os dados foram capturados corretamente
+            console.log("Dados capturados:", formObject);
+
+            const dataToSend = {
+                descricao: formObject.descricao,
+                placa: formObject.placa,
+                anoModelo: formObject.anoModelo,
+                cliente: {
+                    id: formObject.cliente
+                }
+            };
+
+            // Verifica o JSON antes de enviar
+            console.log("JSON a ser enviado:", JSON.stringify(dataToSend));
+
+            URL = 'http://18.188.56.142:8080/api/veiculos';
+
+            // Envio do JSON via fetch
+            fetch(URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Sucesso:', data);
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+        });
+
+    } catch (error) {
+        console.error('Erro ao buscar dados da API:', error);
+
+    }
+}
+
+async function setupFormUpdateVeiculos(URL, formSelector) {
+    const form = document.querySelector(formSelector);
+
+    try {
+        const response = await fetch('http://18.188.56.142:8080/api/clientes', {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        console.log(data);
+
+        const selectCliente = document.getElementById('cliente');
+
+        data.forEach(item => {
+            // Cria uma nova opção no select
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.text = item.nome;
+
+            // Adiciona a opção ao select
+            selectCliente.appendChild(option);
+        });
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Captura os dados do formulário
+            const formData = new FormData(event.target);
+            const formObject = {};
+
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            // Exibe o objeto no console para verificar se os dados foram capturados corretamente
+            console.log("Dados capturados:", formObject);
+
+            const dataToSend = {
+                descricao: formObject.descricao,
+                placa: formObject.placa,
+                anoModelo: formObject.anoModelo,
+                cliente: {
+                    id: formObject.cliente
+                }
+            };
+
+            // Verifica o JSON antes de enviar
+            console.log("JSON a ser enviado:", JSON.stringify(dataToSend));
+
+            // Envio do JSON via fetch
+            fetch(URL, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Sucesso:', data);
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+        });
+
+    } catch (error) {
+        console.error('Erro ao buscar dados da API:', error);
+
+    }
 }
 
 /* Função para configurar a pesquisa
@@ -193,6 +347,7 @@ function setupSearch(formSelector, tableSelector, urlBase) {
     );
     fetchData(urlBase, tableSelector, ['id', 'nome', 'cpf', 'telefone', 'cidade', 'endereco']);
 }*/
+
 
 
 // Exemplo de como chamar a função para diferentes páginas
@@ -252,6 +407,29 @@ document.addEventListener('DOMContentLoaded', function () {
             setupUpdateFormSubmission('#form-servico', `http://18.188.56.142:8080/api/servicos/${itemId}`);
         } else {
             setupFormSubmission('#form-servico', 'http://18.188.56.142:8080/api/servicos');
+        }
+    }
+
+    if (document.querySelector('#form-marca')) {
+        fetchData('http://18.188.56.142:8080/api/marca', '', ['id', 'nomeMarca'], '')
+        setupFormSubmission('#form-marca', 'http://18.188.56.142:8080/api/marca');
+    }
+
+    if (document.querySelector("#veiculo-table")) {
+        fetchData('http://18.188.56.142:8080/api/veiculos', '#veiculo-table', ['id', 'cliente', 'descricao', 'placa', 'anoModelo'], 'form_veiculo.html');
+    }
+
+    if (document.querySelector("#form-veiculo")) {
+        // Verifica se há um ID na URL para determinar se é uma atualização
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('id')) {
+            const itemId = urlParams.get('id');
+            populateForm(urlParams, '#form-veiculo');
+            const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanURL);
+            setupFormUpdateVeiculos(`http://18.188.56.142:8080/api/veiculos/${itemId}`, '#form-veiculo', );
+        } else {
+            setupFormSubmissionVeiculos('http://18.188.56.142:8080/api/clientes', '#form-veiculo');
         }
     }
 });

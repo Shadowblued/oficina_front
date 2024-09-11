@@ -24,12 +24,16 @@ async function fetchData(URL, tableSelector, colunas, pageurl) {
             colunas.forEach(colunas => {
                 const cell = document.createElement('td');
 
-
-                if (colunas === 'cliente') {
-                    cell.textContent = item[colunas]?.nome || 'N/A'; // Exibe o nome do cliente
+                if (colunas === "marca"){
+                    cell.textContent = item[colunas]?.nomeMarca || 'N/A'; // Exibe o nome da Marca
                 } else {
-                    cell.textContent = item[colunas] || 'N/A'; // Preenche com 'N/A' se o dado não existir
+                    if (colunas === 'cliente') {
+                        cell.textContent = item[colunas]?.nome || 'N/A'; // Exibe o nome do cliente
+                    } else {
+                        cell.textContent = item[colunas] || 'N/A'; // Preenche com 'N/A' se o dado não existir
+                    }
                 }
+                
 
                 row.appendChild(cell);
             });
@@ -333,6 +337,154 @@ async function setupFormUpdateVeiculos(URL, formSelector) {
     }
 }
 
+async function setupFormSubmissionPecas(URL, formSelector) {
+    const form = document.querySelector(formSelector);
+
+    try {
+        const response = await fetch(URL, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        console.log(data);
+
+        const selectCliente = document.getElementById('marca');
+
+        data.forEach(item => {
+            // Cria uma nova opção no select
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.text = item.nomeMarca;
+
+            // Adiciona a opção ao select
+            selectCliente.appendChild(option);
+        });
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Captura os dados do formulário
+            const formData = new FormData(event.target);
+            const formObject = {};
+
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            // Exibe o objeto no console para verificar se os dados foram capturados corretamente
+            console.log("Dados capturados:", formObject);
+
+            const dataToSend = {
+                descricao: formObject.descricao,
+                preco: formObject.preco,
+                marca: {
+                    id: formObject.marca
+                }
+            };
+
+            // Verifica o JSON antes de enviar
+            console.log("JSON a ser enviado:", JSON.stringify(dataToSend));
+
+            URL = 'http://18.188.56.142:8080/api/pecas';
+
+            // Envio do JSON via fetch
+            fetch(URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Sucesso:', data);
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+        });
+
+    } catch (error) {
+        console.error('Erro ao buscar dados da API:', error);
+
+    }
+}
+
+async function setupFormUpdatePecas(URL, formSelector) {
+    const form = document.querySelector(formSelector);
+
+    try {
+        const response = await fetch('http://18.188.56.142:8080/api/marca', {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        console.log(data);
+
+        const selectCliente = document.getElementById('marca');
+
+        data.forEach(item => {
+            // Cria uma nova opção no select
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.text = item.nomeMarca;
+
+            // Adiciona a opção ao select
+            selectCliente.appendChild(option);
+        });
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Captura os dados do formulário
+            const formData = new FormData(event.target);
+            const formObject = {};
+
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            // Exibe o objeto no console para verificar se os dados foram capturados corretamente
+            console.log("Dados capturados:", formObject);
+
+            const dataToSend = {
+                descricao: formObject.descricao,
+                preco: formObject.preco,
+                marca: {
+                    id: formObject.marca
+                }
+            };
+
+            // Verifica o JSON antes de enviar
+            console.log("JSON a ser enviado:", JSON.stringify(dataToSend));
+
+            // Envio do JSON via fetch
+            fetch(URL, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Sucesso:', data);
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+        });
+
+    } catch (error) {
+        console.error('Erro ao buscar dados da API:', error);
+
+    }
+}
+
 /* Função para configurar a pesquisa
 function setupSearch(formSelector, tableSelector, urlBase) {
     const form = document.querySelector(formSelector);
@@ -430,6 +582,24 @@ document.addEventListener('DOMContentLoaded', function () {
             setupFormUpdateVeiculos(`http://18.188.56.142:8080/api/veiculos/${itemId}`, '#form-veiculo', );
         } else {
             setupFormSubmissionVeiculos('http://18.188.56.142:8080/api/clientes', '#form-veiculo');
+        }
+    }
+
+    if (document.querySelector("#peca-table")) {
+        fetchData('http://18.188.56.142:8080/api/pecas', '#peca-table', ['id', 'descricao', 'marca', 'preco'], 'form_peca.html');
+    }
+
+    if (document.querySelector("#form-peca")) {
+        // Verifica se há um ID na URL para determinar se é uma atualização
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('id')) {
+            const itemId = urlParams.get('id');
+            populateForm(urlParams, '#form-peca');
+            const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanURL);
+            setupFormUpdatePecas(`http://18.188.56.142:8080/api/pecas/${itemId}`, '#form-peca', );
+        } else {
+            setupFormSubmissionPecas('http://18.188.56.142:8080/api/marca', '#form-peca');
         }
     }
 });

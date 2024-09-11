@@ -1,49 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cliente</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="scripts.js" defer></script>
 </head>
+
 <body>
     <div id="menu-container"></div>
-    
+
     <h1 style="display:flex; padding-top: 40px; justify-content: center; align-items: center;">Cadastro de Peça</h1>
     <div style="display: flex; justify-content: center;">
-        <form class="row g-3" action="" method="get">
+        <form id="form-peca" class="row g-3">
             <div class="col-md-12">
-                <label for="exampleFormControlInput1" class="form-label">Descrição</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Descrição" required>
+                <label for="Descrição" class="form-label">Descrição</label>
+                <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição" required>
             </div>
             <div class="col-md-6">
-                <label for="exampleFormControlInput1" class="form-label">Marca</label>
-                <select class="form-select" id="exampleFormControlInput1" placeholder="" required>
+                <label for="Marca" class="form-label">Marca</label>
+                <select class="form-select" id="marca" name="marca" required>
                     <option selected>Selecione uma Marca</option>
                 </select>
             </div>
             <div class="col-md-3" style="display: flex; align-items: end;">
-                
+
                 <a href="marca.html" class="btn btn-primary">Cadastrar</a>
             </div>
             <label class="form-label">Preço</label>
-            <div class="input-group mb-1">   
+            <div class="input-group mb-1">
                 <span class="input-group-text">R$</span>
-                <input class="form-control" id="exampleFormControlInput1" placeholder="00,00" style="flex: none; width: 100px;">
+                <input class="form-control" id="preco" name="preco" placeholder="00,00"
+                    style="flex: none; width: 100px;">
             </div>
             <div>
-                <a onclick="window.history.back();" type="button" class="btn btn-primary">Voltar</a>
-                <input type="submit" class="btn btn-primary">Cadastrar</input>
+                <a href="peca.html" type="button" class="btn btn-primary">Voltar</a>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
             </div>
         </form>
 
     </div>
-    
-        
-    
+
+
+
 
     <script src="navbar.js"></script>
 
 </body>
+
 </html>

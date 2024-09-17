@@ -24,17 +24,23 @@ async function fetchData(URL, tableSelector, colunas, pageurl) {
             colunas.forEach(colunas => {
                 const cell = document.createElement('td');
 
-                if (colunas === "marca"){
+                if (colunas === "marca") {
                     cell.textContent = item[colunas]?.nomeMarca || 'N/A'; // Exibe o nome da Marca
+                } else if (colunas === 'cliente') {
+                    cell.textContent = item[colunas]?.nome || 'N/A'; // Exibe o nome do cliente
+                } else if (colunas === "veiculo") {
+                    cell.textContent = item[colunas]?.descricao || "N/A"; // Exibe a descrição do veiculo
+                } else if (colunas === "mecanico") {
+                    cell.textContent = item[colunas]?.nome || "N/A";
+                } else if (colunas === 'pecas') {
+                    const pecasDescricao = item.pecas.map(peca => peca.descricao).join(', ');
+                    cell.textContent = pecasDescricao || 'N/A'; // Exibe as descrições das peças
+                } else if (colunas === 'servicos') {
+                    const servicosDescricao = item.servicos.map(servico => servico.descricaoServico).join(', ');
+                    cell.textContent = servicosDescricao || 'N/A'; // Exibe as descrições dos serviços
                 } else {
-                    if (colunas === 'cliente') {
-                        cell.textContent = item[colunas]?.nome || 'N/A'; // Exibe o nome do cliente
-                    } else {
-                        cell.textContent = item[colunas] || 'N/A'; // Preenche com 'N/A' se o dado não existir
-                    }
+                    cell.textContent = item[colunas] || 'N/A'; // Preenche com 'N/A' se o dado não existir
                 }
-                
-
                 row.appendChild(cell);
             });
 
@@ -56,35 +62,46 @@ async function fetchData(URL, tableSelector, colunas, pageurl) {
 
             // Botão de Deletar
             const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Deletar';
-            deleteButton.className = 'btn btn-danger';
-            deleteButton.value = item.id;
-            deleteButton.addEventListener('click', async () => {
-                // Aqui você pode definir o que acontece quando o botão de deletar é clicado
-                const confirmed = confirm(`Deseja realmente deletar o item com ID ${item.id}?`);
-                if (confirmed) {
-                    try {
-                        const deleteResponse = await fetch(`${URL}/${item.id}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json'
+            if (tableSelector == '#os-table') {
+                deleteButton.textContent = 'Fechar OS';
+                deleteButton.className = 'btn btn-danger';
+                deleteButton.value = item.id;
+                deleteButton.addEventListener('click', async () => {
+                    fecharOs(item, URL);
+
+                });
+
+            } else {
+                deleteButton.textContent = 'Deletar';
+                deleteButton.className = 'btn btn-danger';
+                deleteButton.value = item.id;
+                deleteButton.addEventListener('click', async () => {
+                    // Aqui você pode definir o que acontece quando o botão de deletar é clicado
+                    const confirmed = confirm(`Deseja realmente deletar o item com ID ${item.id}?`);
+                    if (confirmed) {
+                        try {
+                            const deleteResponse = await fetch(`${URL}/${item.id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            if (deleteResponse.ok) {
+                                console.log(`Item com ID ${item.id} deletado com sucesso`);
+
+                                // Atualizar a tabela após deletar o item
+                                fetchData(URL, tableSelector, colunas);
+                            } else {
+                                console.error('Erro ao deletar o item:', deleteResponse.statusText);
+                                fetchData(URL, tableSelector, colunas, pageurl);
                             }
-                        });
-
-                        if (deleteResponse.ok) {
-                            console.log(`Item com ID ${item.id} deletado com sucesso`);
-
-                            // Atualizar a tabela após deletar o item
-                            fetchData(URL, tableSelector, colunas);
-                        } else {
-                            console.error('Erro ao deletar o item:', deleteResponse.statusText);
-                            fetchData(URL, tableSelector, colunas);
+                        } catch (error) {
+                            console.error('Erro ao tentar deletar o item:', error);
                         }
-                    } catch (error) {
-                        console.error('Erro ao tentar deletar o item:', error);
                     }
-                }
-            });
+                });
+            }
 
             // Adiciona os botões na célula
             actionCell.appendChild(updateButton);
@@ -128,6 +145,7 @@ function setupUpdateFormSubmission(formSelector, URL) {
             .then(response => response.json())
             .then(data => {
                 console.log('Item atualizado com sucesso:', data);
+                alert('Atualização registrada!');
             })
             .catch(error => {
                 console.error('Erro ao atualizar o item:', error);
@@ -170,6 +188,7 @@ function setupFormSubmission(formSelector, URL) {
             .then(response => response.json())
             .then(data => {
                 console.log('Sucesso:', data);
+                alert('Cadastro realizado com sucesso!');
             })
             .catch(error => {
                 console.error('Erro:', error);
@@ -251,11 +270,13 @@ async function setupFormSubmissionVeiculos(URL, formSelector) {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Sucesso:', data);
+                    alert('Veículo cadastrada com sucesso!');
                 })
                 .catch(error => {
                     console.error('Erro:', error);
                 });
         });
+        alert('Veículo cadastrada com sucesso!');
 
     } catch (error) {
         console.error('Erro ao buscar dados da API:', error);
@@ -325,6 +346,7 @@ async function setupFormUpdateVeiculos(URL, formSelector) {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Sucesso:', data);
+                    alert('Veículo atualizado com sucesso!');
                 })
                 .catch(error => {
                     console.error('Erro:', error);
@@ -400,6 +422,7 @@ async function setupFormSubmissionPecas(URL, formSelector) {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Sucesso:', data);
+                    alert('Peça cadastrada com sucesso!');
                 })
                 .catch(error => {
                     console.error('Erro:', error);
@@ -473,6 +496,7 @@ async function setupFormUpdatePecas(URL, formSelector) {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Sucesso:', data);
+                    alert('Peça atualizada com sucesso!');
                 })
                 .catch(error => {
                     console.error('Erro:', error);
@@ -482,6 +506,48 @@ async function setupFormUpdatePecas(URL, formSelector) {
     } catch (error) {
         console.error('Erro ao buscar dados da API:', error);
 
+    }
+}
+
+async function fecharOs(item, URL) {
+    const enviarEmail = confirm('Deseja enviar e-mail para o cliente?');
+    if (enviarEmail) {
+        try {
+            const emailResponse = await fetch(`http://18.188.56.142:8080/api/os/email/${item.id}`, {
+                method: 'POST', // Método para enviar o e-mail
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+
+            });
+            if (emailResponse.ok) {
+                console.log("Email enviado com sucesso");
+            } else {
+                console.log("Email não Enviado");
+            }
+
+        } catch (error) {
+            console.log("Email não enviado: erro", error)
+        }
+    }
+    const currentDate = new Date();
+    const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}/${String(currentDate.getMonth() + 1).padStart(2, '0')}/${currentDate.getFullYear()}`;
+    try {
+        item.encerramentoOs = formattedDate;
+        const response = await fetch(`${URL}/${item.id}`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(item)
+        });
+
+        const data = await response.json();
+        console.log("OS fechada com sucesso:", data);
+
+        fetchData('http://18.188.56.142:8080/api/os', '#os-table', ['id', 'numero_os', 'cliente', 'veiculo', 'servicos', 'pecas', 'mecanico', 'aberturaOs', 'encerramentoOs', 'valorTotal'], 'form_os.html');
+    } catch (error) {
+        console.error('Erro ao fechar a OS', error)
     }
 }
 
@@ -579,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function () {
             populateForm(urlParams, '#form-veiculo');
             const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.replaceState({}, document.title, cleanURL);
-            setupFormUpdateVeiculos(`http://18.188.56.142:8080/api/veiculos/${itemId}`, '#form-veiculo', );
+            setupFormUpdateVeiculos(`http://18.188.56.142:8080/api/veiculos/${itemId}`, '#form-veiculo',);
         } else {
             setupFormSubmissionVeiculos('http://18.188.56.142:8080/api/clientes', '#form-veiculo');
         }
@@ -597,9 +663,13 @@ document.addEventListener('DOMContentLoaded', function () {
             populateForm(urlParams, '#form-peca');
             const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.replaceState({}, document.title, cleanURL);
-            setupFormUpdatePecas(`http://18.188.56.142:8080/api/pecas/${itemId}`, '#form-peca', );
+            setupFormUpdatePecas(`http://18.188.56.142:8080/api/pecas/${itemId}`, '#form-peca',);
         } else {
             setupFormSubmissionPecas('http://18.188.56.142:8080/api/marca', '#form-peca');
         }
+    }
+
+    if (document.querySelector("#os-table")) {
+        fetchData('http://18.188.56.142:8080/api/os', '#os-table', ['id', 'numero_os', 'cliente', 'veiculo', 'servicos', 'pecas', 'mecanico', 'aberturaOs', 'encerramentoOs', 'valorTotal'], 'form_os.html');
     }
 });

@@ -1,54 +1,278 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ordem de Serviço</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
     <div id="menu-container"></div>
-    
+
     <h1 style="display:flex; padding-top: 40px; justify-content: center; align-items: center;">Cadastro de OS</h1>
     <div style="display: flex; justify-content: center;">
-        <form class="row g-3" action="" method="get">
+        <form class="row g-3" id="form-os">
             <div class="col-md-6">
-                <label for="exampleFormControlInput1" class="form-label">Cliente</label>
-                <select class="form-select" id="exampleFormControlInput1" placeholder="Nome" required>
+                <label for="cliente" class="form-label">Cliente</label>
+                <select class="form-select" id="cliente" name="cliente" placeholder="Nome" required>
                     <option>Selecione o Cliente</option>
                 </select>
             </div>
             <div class="col-md-6">
-                <label for="exampleFormControlInput1" class="form-label">Veículo</label>
-                <select class="form-select" id="exampleFormControlInput1" placeholder="(00) 0 0000-0000" required>
+                <label for="veiculo" class="form-label">Veículo</label>
+                <select class="form-select" id="veiculo" name="veiculo" placeholder="(00) 0 0000-0000" required>
                     <option selected>Selecione um Veículo</option>
                 </select>
             </div>
             <div class="col-md-6">
-                <label for="exampleFormControlInput1" class="form-label">Mêcanico</label>
-                <select class="form-select" id="exampleFormControlInput1" placeholder="Endereço" required>
+                <label for="mecanico" class="form-label">Mêcanico</label>
+                <select class="form-select" id="mecanico" name="mecanico" placeholder="Endereço" required>
                     <option selected>Selecione um Mecânico</option>
                 </select>
             </div>
-            <div class="col-md-6">
-                <label for="exampleFormControlInput1" class="form-label">Serviço</label>
-                <select class="form-select" id="exampleFormControlInput1" required>
-                    <option selected>Selecione o Serviço</option>
-                </select>
+            <div class="col-md-12">
+                <label for="servico" class="form-label">Serviço</label>
+                <select class="form-select" id="servico" name="servico" required multiple></select>
+            </div>
+            <div class="col-md-12">
+                <label for="pecas" class="form-label">Peças</label>
+                <select class="form-select" id="pecas" name="pecas" multiple></select>
             </div>
             <div>
-                <a onclick="window.history.back();" type="button" class="btn btn-primary">Voltar</a>
+                <a href="index.html" type="button" class="btn btn-primary">Voltar</a>
                 <button type="submit" class="btn btn-primary">Cadastrar</button>
             </div>
         </form>
 
     </div>
-    
-        
-    
-
     <script src="navbar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectServico = new Choices('#servico', { removeItemButton: true });
+            const selectPecas = new Choices('#pecas', { removeItemButton: true });
 
+            SelectItems();
+            carregarItens('http://18.188.56.142:8080/api/servicos', selectServico);
+            carregarItens('http://18.188.56.142:8080/api/pecas', selectPecas);
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('id')) {
+                const itemId = urlParams.get('id');
+                const numeroOS = urlParams.get('numero_os')
+                const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.history.replaceState({}, document.title, cleanURL);
+                update(itemId, numeroOS);
+            } else {
+                submit();
+            }
+
+        });
+        async function carregarItens(url, selectInstance) {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                selectInstance.clearChoices();
+
+                // Preencher o select com os dados recebidos
+                data.forEach(item => {
+                    // Verifica se o item tem o campo `descricao` ou `descricaoServico`
+                    const label = item.descricaoServico || item.descricao;
+
+                    selectInstance.setChoices([{
+                        value: item.id,   // ID para o valor
+                        label: label,     // Descrição para o rótulo
+                        selected: false
+                    }], 'value', 'label', false);
+                });
+            } catch (error) {
+                console.error(`Erro ao carregar dados da API (${url}):`, error);
+            }
+        }
+
+        async function SelectItems() {
+            try {
+                const responseCliente = await fetch('http://18.188.56.142:8080/api/clientes', {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const dataCliente = await responseCliente.json();
+                console.log(dataCliente);
+
+                const selectCliente = document.getElementById('cliente');
+
+                dataCliente.forEach(item => {
+                    // Cria uma nova opção no select
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.text = item.nome;
+
+                    // Adiciona a opção ao select
+                    selectCliente.appendChild(option);
+                });
+
+                const responseMecanico = await fetch('http://18.188.56.142:8080/api/mecanicos', {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const dataMecanico = await responseMecanico.json();
+                console.log(dataMecanico);
+
+                const selectMecanico = document.getElementById('mecanico');
+
+                dataMecanico.forEach(item => {
+                    // Cria uma nova opção no select
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.text = item.nome;
+
+                    // Adiciona a opção ao select
+                    selectMecanico.appendChild(option);
+                });
+
+                const responseVeiculo = await fetch('http://18.188.56.142:8080/api/veiculos', {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const dataVeiculo = await responseVeiculo.json();
+                console.log(dataVeiculo);
+
+                const selectVeiculo = document.getElementById('veiculo');
+
+                dataVeiculo.forEach(item => {
+                    // Cria uma nova opção no select
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.text = item.descricao;
+
+                    // Adiciona a opção ao select
+                    selectVeiculo.appendChild(option);
+                });
+            } catch (error) {
+                console.error(`Erro ao carregar dados da API (${url}):`, error);
+            }
+        }
+
+        function submit() {
+            const form = document.querySelector('#form-os');
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault(); // Evita o recarregamento da página
+
+                // Coletar os dados do formulário
+                const clienteId = document.getElementById('cliente').value;
+                const mecanicoId = document.getElementById('mecanico').value;
+                const veiculoId = document.getElementById('veiculo').value;
+
+                const servicos = Array.from(document.getElementById('servico').selectedOptions).map(option => {
+                    return { id: option.value };
+                });
+
+                const pecas = Array.from(document.getElementById('pecas').selectedOptions).map(option => {
+                    return { id: option.value };
+                });
+
+                // Construir o objeto JSON
+                const osData = {
+                    cliente: { id: clienteId },
+                    mecanico: { id: mecanicoId },
+                    veiculo: { id: veiculoId },
+                    pecas: pecas,
+                    servicos: servicos
+                };
+                console.log(osData);
+
+                try {
+                    // Enviar os dados para a API usando POST ou PUT (depende da sua API)
+                    const response = await fetch('http://18.188.56.142:8080/api/os', {
+                        method: 'POST', // ou 'PUT' se for atualização
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(osData) // Envia o corpo como JSON
+                    });
+
+                    if (response.ok) {
+                        alert('Ordem de Serviço cadastrada com sucesso!');
+                        // Redirecionar ou limpar o formulário aqui
+                    } else {
+                        alert('Erro ao cadastrar Ordem de Serviço.');
+                    }
+                } catch (error) {
+                    console.error('Erro na requisição:', error);
+                }
+            });
+        };
+
+        function update(itemId, numeroOS) {
+            const form = document.querySelector('#form-os');
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault(); // Evita o recarregamento da página
+
+                // Coletar os dados do formulário
+                const clienteId = document.getElementById('cliente').value;
+                const mecanicoId = document.getElementById('mecanico').value;
+                const veiculoId = document.getElementById('veiculo').value;
+
+                const servicos = Array.from(document.getElementById('servico').selectedOptions).map(option => {
+                    return { id: option.value };
+                });
+
+                const pecas = Array.from(document.getElementById('pecas').selectedOptions).map(option => {
+                    return { id: option.value };
+                });
+
+                // Construir o objeto JSON
+                const osData = {
+                    cliente: { id: clienteId },
+                    mecanico: { id: mecanicoId },
+                    veiculo: { id: veiculoId },
+                    pecas: pecas,
+                    servicos: servicos,
+                    numero_os: numeroOS
+                };
+                console.log(osData);
+
+                try {
+                    // Enviar os dados para a API usando POST ou PUT (depende da sua API)
+                    const response = await fetch(`http://18.188.56.142:8080/api/os/${itemId}`, {
+                        method: 'PUT', // ou 'PUT' se for atualização
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(osData) // Envia o corpo como JSON
+                    });
+
+                    if (response.ok) {
+                        alert('Ordem de Serviço cadastrada com sucesso!');
+                        // Redirecionar ou limpar o formulário aqui
+                    } else {
+                        alert('Erro ao cadastrar Ordem de Serviço.');
+                    }
+                } catch (error) {
+                    console.error('Erro na requisição:', error);
+                }
+            });
+        };
+
+
+    </script>
 </body>
+
 </html>
